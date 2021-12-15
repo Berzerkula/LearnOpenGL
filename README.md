@@ -1,5 +1,7 @@
 # Learning OpenGL with GLFW framework #
 
+## [LearnOpenGL](https://learnopengl.com/) ##
+
 Install [GLFW framework](https://www.glfw.org/)
 
 Install GLAD `headers` to `/usr/include` or put them elsewhere and adjust the `Makefile` for GCC to find them.
