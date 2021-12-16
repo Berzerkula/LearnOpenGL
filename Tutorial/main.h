@@ -6,5 +6,4 @@
 
 void error_callback(int, const char*);
 void framebuffer_size_callback(GLFWwindow*, int, int);
-GLFWwindow* gibberish(int, int);
 void processInput(GLFWwindow *window);
