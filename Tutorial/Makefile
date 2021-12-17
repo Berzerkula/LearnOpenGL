@@ -14,3 +14,5 @@ $(OUT): $(OBJFILES)
 clean:
 	rm -fv $(OBJFILES) $(OUT)
 
+run: clean $(OUT)
+	./main
