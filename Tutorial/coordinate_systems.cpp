@@ -7,7 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 //#include "filesystem.h"
-#include "shader_s.h"
+#include "shader_m.h"
 
 #include <iostream>
 
@@ -53,7 +53,7 @@ int main()
 
     // build and compile our shader program
     // ------------------------------------
-    Shader ourShader("transform.vs", "transform.fs"); // you can name your shader files however you like
+    Shader ourShader("coordinate_systems.vs", "coordinate_systems.fs"); // you can name your shader files however you like
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -157,30 +157,30 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
-        // create transformations
-        glm::mat4 transform = glm::mat4(1.0f);
-        // first container
-        // ---------------
-        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        // activate shader
+        ourShader.use();
 
-        // get matrix's uniform location and set matrix
-        unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        // create transformations
+        glm::mat4 model         = glm::mat4(1.0f);
+        glm::mat4 view          = glm::mat4(1.0f);
+        glm::mat4 projection    = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+
+        // retrieve the matrix uniform locations
+        unsigned int modelLoc = glGetUniformLocation(ourShader.ID, "model");
+        unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
+
+        // pass to the shaders (3 different ways)
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+        // note: currently setting the projection matrix each frame.
+        //       since it rarely changes, best practice to set it outside the main loop once.
+        ourShader.setMat4("projection", projection);
 
         // render container
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-        // second transformation
-        // ---------------------
-        transform = glm::mat4(1.0f); // reset it to identity matrix
-        transform = glm::translate(transform, glm::vec3(-0.5f, 0.5f, 0.0f));
-        float scaleAmount = sin(glfwGetTime());
-        transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, &transform[0][0]); // this time take the matrix value array's first element as its memory pointer value
-
-        // now with the uniform matrix being replaced with new transformations, draw it again.
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
