@@ -2,6 +2,7 @@
 #include "main.h"
 
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -147,8 +148,12 @@ int main()
         glBindVertexArray(VAOs[1]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        // Draw Second Triangle as Dark Red
+        // Draw Third Triangle with common shaderProgram
         glUseProgram(shaderProgram);
+        float timeValue = glfwGetTime();
+        float greenValue  = (sin(timeValue) / 2.0f) + 0.5f;
+        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
         glBindVertexArray(VAOs[2]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
