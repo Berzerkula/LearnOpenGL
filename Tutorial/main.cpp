@@ -5,14 +5,6 @@
 
 using namespace std;
 
-const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "in vec4 vertexColor;\n"
-    "void main()\n"
-    "{\n"
-    " FragColor = vertexColor;\n"
-    "}\0";
-
 const char *fragmentRedShaderSource = "#version 330 core\n"
 	"out vec4 FragColor;\n"
 	"\n"
@@ -49,7 +41,7 @@ int main()
 
     // Pass FragmentColor from vertexshader to fragmentshader
     unsigned int shaderProgram = glCreateProgram();
-    createShaderProgram(vertexShader, fragmentShaderSource, shaderProgram);
+    createShaderProgram(vertexShader, shaderProgram);
 
 	unsigned int shaderRedProgram = glCreateProgram();
     unsigned int shaderGreenProgram = glCreateProgram();
