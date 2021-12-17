@@ -7,9 +7,19 @@ using namespace std;
 
 const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
+    "out vec4 vertexColor;\n"
     "void main()\n"
     "{\n"
-    " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    " gl_Position = vec4(aPos, 1.0);\n"
+    " vertexColor = vec4(0.5, 0.0, 0.0, 1.0);"
+    "}\0";
+
+const char *fragmentShaderSource = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "in vec4 vertexColor;\n"
+    "void main()\n"
+    "{\n"
+    " FragColor = vertexColor;\n"
     "}\0";
 
 const char *fragmentRedShaderSource = "#version 330 core\n"
@@ -46,6 +56,10 @@ int main()
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
     createVertexShader(vertexShader, vertexShaderSource);
 
+    // Pass FragmentColor from vertexshader to fragmentshader
+    unsigned int shaderProgram = glCreateProgram();
+    createShaderProgram(vertexShader, fragmentShaderSource, shaderProgram);
+
 	unsigned int shaderRedProgram = glCreateProgram();
     unsigned int shaderGreenProgram = glCreateProgram();
     unsigned int shaderYellowProgram = glCreateProgram();
@@ -54,7 +68,7 @@ int main()
     createShaderProgram(vertexShader, fragmentYellowShaderSource, shaderYellowProgram);
 
     glDeleteShader(vertexShader);
-    
+
     // For triangles
     float triangle_1[] = {
         -0.6f, -0.6f,  0.0f, // left
@@ -66,6 +80,12 @@ int main()
          0.0f, -0.6f,  0.0f, // left
          0.6f, -0.6f,  0.0f, // right
          0.3f,  0.3f,  0.0f  // top
+    };
+
+    float triangle_3[] = {
+        -0.3f,  0.3f,  0.0f, // left
+         0.3f,  0.3f,  0.0f, // right
+         0.0f, -0.6f,  0.0f  // top
     };
 
     // For rectangle
@@ -82,9 +102,9 @@ int main()
      };
 
     // Vertex Buffer Object, Vertex Array Object and Element Buffer Object
-	unsigned int EBO, VAOs[3], VBOs[3];
-	glGenVertexArrays(3, VAOs);
-    glGenBuffers(3, VBOs);
+	unsigned int EBO, VAOs[4], VBOs[4];
+	glGenVertexArrays(4, VAOs);
+    glGenBuffers(4, VBOs);
     glGenBuffers(1, &EBO);
 
     // First triangle setup
@@ -101,9 +121,16 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);
 
-    // Rectangle setup
+    // Third triangle setup
     glBindVertexArray(VAOs[2]);
     glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_3), triangle_3, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // Rectangle setup
+    glBindVertexArray(VAOs[3]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[3]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangle), rectangle, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -137,9 +164,14 @@ int main()
         glBindVertexArray(VAOs[1]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
+        // Draw Second Triangle as Dark Red
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAOs[2]);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
         // Draw Rectangle as Yellow
         glUseProgram(shaderYellowProgram);
-        glBindVertexArray(VAOs[2]);
+        glBindVertexArray(VAOs[3]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // check and call events and swap the buffers
