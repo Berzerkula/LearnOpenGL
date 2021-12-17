@@ -6,31 +6,6 @@
 
 using namespace std;
 
-const char *fragmentRedShaderSource = "#version 330 core\n"
-	"out vec4 FragColor;\n"
-	"\n"
-	"void main()\n"
-	"{\n"
-	" FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
-	"}\0";
-
-const char *fragmentGreenShaderSource = "#version 330 core\n"
-	"out vec4 FragColor;\n"
-	"\n"
-	"void main()\n"
-	"{\n"
-	" FragColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);\n"
-	"}\0";
-
-const char *fragmentYellowShaderSource = "#version 330 core\n"
-	"out vec4 FragColor;\n"
-	"\n"
-	"void main()\n"
-	"{\n"
-	" FragColor = vec4(1.0f, 1.5f, 0.0f, 1.0f);\n"
-	"}\0";
-
-
 int main()
 {
     glfwSetErrorCallback(error_callback);
