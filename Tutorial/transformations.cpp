@@ -56,7 +56,7 @@ int main()
 
     // build and compile our shader program
     // ------------------------------------
-    Shader ourShader("texture.vs", "texture.fs"); // you can name your shader files however you like
+    Shader ourShader("transform.vs", "transform.fs"); // you can name your shader files however you like
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
