@@ -2,6 +2,10 @@
 #include <GLFW/glfw3.h>
 #include "stb_image.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 //#include "filesystem.h"
 #include "shader_s.h"
 
@@ -137,7 +141,7 @@ int main()
     stbi_image_free(data);
 
     ourShader.use();
-    glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
+    ourShader.setInt("texture1", 0);
     ourShader.setInt("texture2", 1);
 
     // render loop
@@ -161,6 +165,16 @@ int main()
 
         // set the texture mix  value in the shader
         ourShader.setFloat("mixValue", mixValue);
+
+        // create transformations
+        glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f));
+        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        // get matrix's uniform location and set matrix
+        ourShader.use();
+        unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 
         // render container
         glBindVertexArray(VAO);
@@ -196,14 +210,12 @@ void processInput(GLFWwindow *window)
         mixValue += 0.001f;
         if(mixValue >= 1.0f)
             mixValue = 1.0f;
-        std::cout << "mixValue: " << mixValue << std::endl;
     }
     if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
         mixValue -= 0.001f;
         if(mixValue <= 0.0f)
             mixValue = 0.0f;
-        std::cout << "mixValue: " << mixValue << std::endl;
     }
 }
 
