@@ -72,6 +72,12 @@ int main()
          0.0f, -0.6f,  0.0f  // top
     };
 
+    float triangle_4[] = {
+        -0.3f,  0.5f,  0.0f, // left
+         0.3f,  0.5f,  0.0f, // right
+         0.0f,  1.0f,  0.0f  // top
+    };
+
     // For rectangle
 	float rectangle[] = {
          0.3f,  0.5f, 0.0f, // top right
@@ -86,9 +92,9 @@ int main()
      };
 
     // Vertex Buffer Object, Vertex Array Object and Element Buffer Object
-	unsigned int EBO, VAOs[4], VBOs[4];
-	glGenVertexArrays(4, VAOs);
-    glGenBuffers(4, VBOs);
+	unsigned int EBO, VAOs[5], VBOs[5];
+	glGenVertexArrays(5, VAOs);
+    glGenBuffers(5, VBOs);
     glGenBuffers(1, &EBO);
 
     // First triangle setup
@@ -112,9 +118,16 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);
 
-    // Rectangle setup
+    // Fourth triangle setup
     glBindVertexArray(VAOs[3]);
     glBindBuffer(GL_ARRAY_BUFFER, VBOs[3]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_4), triangle_4, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // Rectangle setup
+    glBindVertexArray(VAOs[4]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[4]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangle), rectangle, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -137,7 +150,7 @@ int main()
         // rendering
         clearWithColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
+        
         // Draw First Trianagle as Red
         glUseProgram(shaderRedProgram);
         glBindVertexArray(VAOs[0]);
@@ -151,15 +164,20 @@ int main()
         // Draw Third Triangle with common shaderProgram
         glUseProgram(shaderProgram);
         float timeValue = glfwGetTime();
-        float greenValue  = (sin(timeValue) / 2.0f) + 0.5f;
+        float blueValue  = (sin(timeValue) / 2.0f) + 0.5f;
         int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        glUniform4f(vertexColorLocation, 0.0f, 0.0f, blueValue, 1.0f);
         glBindVertexArray(VAOs[2]);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        // Draw Fourth Triangle as something
+        glUseProgram(shaderGreenProgram);
+        glBindVertexArray(VAOs[3]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // Draw Rectangle as Yellow
         glUseProgram(shaderYellowProgram);
-        glBindVertexArray(VAOs[3]);
+        glBindVertexArray(VAOs[4]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // check and call events and swap the buffers
@@ -169,8 +187,8 @@ int main()
     }
 
     // Cleanup
-    glDeleteVertexArrays(2, VAOs);
-    glDeleteBuffers(2, VBOs);
+    glDeleteVertexArrays(5, VAOs);
+    glDeleteBuffers(5, VBOs);
     glDeleteBuffers(1, &EBO);
     glDeleteProgram(shaderRedProgram);
     glDeleteProgram(shaderGreenProgram);
