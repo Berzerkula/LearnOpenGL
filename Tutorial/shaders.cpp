@@ -4,6 +4,15 @@
 
 using namespace std;
 
+const char *vertexShaderSource = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "out vec4 vertexColor;\n"
+    "void main()\n"
+    "{\n"
+    " gl_Position = vec4(aPos, 1.0);\n"
+    " vertexColor = vec4(0.5, 0.0, 0.0, 1.0);"
+    "}\0";
+
 int success;
 char infoLog[512];
 
@@ -36,7 +45,7 @@ void createShaderProgram(unsigned int vertexShader, const char *fragmentShaderSo
 
 }
 
-void createVertexShader(unsigned int vertexShader, const char *vertexShaderSource)
+void createVertexShader(unsigned int vertexShader)
 {
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);

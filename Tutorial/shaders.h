@@ -2,4 +2,4 @@
 #include <GLFW/glfw3.h>
 
 void createShaderProgram(unsigned int vertexShader, const char *fragmentShaderSource, unsigned int shaderProgram);
-void createVertexShader(unsigned int vertexShader, const char *vertexShaderSource);
+void createVertexShader(unsigned int vertexShader);
